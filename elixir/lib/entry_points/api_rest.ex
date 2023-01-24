@@ -2,6 +2,7 @@ defmodule ElixirObservability.EntryPoint.ApiRest do
   @moduledoc """
   Access point to the rest exposed services
   """
+  require OpenTelemetry.Tracer, as: Tracer
   alias ElixirObservability.Domain.UseCase.HelloUseCase
 
   require Logger
@@ -38,6 +39,7 @@ defmodule ElixirObservability.EntryPoint.ApiRest do
       {:ok, response} -> response |> build_response(conn)
       {:error, error} ->
         Logger.error("Error use case #{inspect(error)}")
+        Tracer.set_status(:error, inspect(error))
 
         build_response(%{status: 500, body: "Error"}, conn)
     end
@@ -70,6 +72,7 @@ defmodule ElixirObservability.EntryPoint.ApiRest do
   @impl Plug.ErrorHandler
   def handle_errors(conn, error) do
     Logger.error("Internal server - #{inspect(error)}")
+    Tracer.set_status(:error, inspect(error))
 
     build_response(%{status: 500, body: %{status: 500, error: "Internal server"}}, conn)
   end

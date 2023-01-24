@@ -12,6 +12,9 @@ defmodule ElixirObservability.Application do
     config = AppConfig.load_config()
 
     CertificatesAdmin.setup()
+    OpentelemetryPhoenix.setup([endpoint_prefix: [:plug, :router_dispatch]])
+    OpentelemetryEcto.setup([:elixir_observability, :adapters, :repository, :repo])
+    OpentelemetryFinch.setup()
 
     children = with_plug_server(config) ++ all_env_children() ++ env_children()
 

@@ -41,6 +41,12 @@ defmodule ElixirObservability.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:telemetry_metrics_prometheus, "~> 1.1.0"},
 
+      {:opentelemetry, "~> 1.1"},
+      {:opentelemetry_phoenix, "~> 1.0"},
+      {:opentelemetry_ecto, "~> 1.0"},
+      {:opentelemetry_finch, "~> 0.1"},
+      {:opentelemetry_exporter, "~> 1.2"},
+
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_unit_sonarqube, "~> 0.1", only: :test},
     ]

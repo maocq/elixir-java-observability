@@ -21,6 +21,16 @@ config :logger, :debug_log,
        path: "/tmp/log/observability-elixir.log",
        level: :debug
 
+config :opentelemetry, :resource, service: %{name: "Elixir"}
+config :opentelemetry, :processors,
+        otel_batch_processor: %{
+          exporter: {
+            :opentelemetry_exporter,
+            %{endpoints: [{:http, '172.17.0.1', 4318, []}]}
+          }
+        }
+
+
 config :elixir_observability, ElixirObservability.Adapters.Repository.Repo,
        database: "compose-postgres",
        username: "compose-postgres",
