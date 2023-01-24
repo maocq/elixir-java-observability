@@ -12,19 +12,26 @@ config :elixir_observability,
        custom_metrics_prefix_name: "elixir_observability_local"
 
 config :logger,
-       level: :info
+       level: :debug
+
+config :logger,
+       backends: [{LoggerFileBackend, :debug_log}]
+
+config :logger, :debug_log,
+       path: "/tmp/log/observability-elixir.log",
+       level: :debug
 
 config :elixir_observability, ElixirObservability.Adapters.Repository.Repo,
        database: "compose-postgres",
        username: "compose-postgres",
        password: "compose-postgres",
-       hostname: "172.17.0.1", # "observability-db"
+       hostname: "observability-db",
        pool_size: 10,
        queue_target: 5000,
        timeout: :timer.minutes(1)
 
 config :elixir_observability,
-       external_service_ip: "172.17.0.1"
+       external_service_ip: "observability-java"
 
 config :elixir_observability,
        account_behaviour: ElixirObservability.Adapters.Repository.Account.AccountDataRepository,

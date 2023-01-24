@@ -1,11 +1,12 @@
 defmodule ElixirObservability.Domain.UseCase.HelloUseCase do
+  require Logger
 
   @account_behaviour Application.compile_env(:elixir_observability, :account_behaviour, ElixirObservability.Adapters.Repository.Account.AccountDataRepository)
   @external_service_behaviour Application.compile_env(:elixir_observability, :external_service_behaviour, ElixirObservability.Adapters.RestConsumer.RestConsumer)
 
   def external_service(status) do
 
-
+    Logger.info("Use case message ...")
     with {:ok, _} <- @external_service_behaviour.external_service(200),
          account  <- @account_behaviour.find_by_id(4000),
          {:ok, _} <- @external_service_behaviour.external_service(status) do
