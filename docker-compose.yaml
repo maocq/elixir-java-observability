@@ -88,20 +88,20 @@ services:
       networks:
           - network
 
-  #observability-elixir:
-  #    container_name: observability-elixir
-  #    build:
-  #        context: ./elixir
-  #        dockerfile: Dockerfile
-  #    image: observability-elixir:latest
-  #    volumes:
-  #      - /tmp/log:/tmp/log
-  #    depends_on:
-  #        - observability-java
-  #    ports:
-  #        - 8083:8083
-  #    networks:
-  #        - network
+  observability-elixir:
+      container_name: observability-elixir
+      build:
+          context: ./elixir
+          dockerfile: Dockerfile
+      image: observability-elixir:latest
+      volumes:
+        - /tmp/log:/tmp/log
+      depends_on:
+          - observability-java
+      ports:
+          - 8083:8083
+      networks:
+          - network
 
 networks:
     network:
