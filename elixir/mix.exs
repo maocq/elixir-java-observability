@@ -37,6 +37,10 @@ defmodule ElixirObservability.MixProject do
       {:finch, "~> 0.13"},
       {:logger_file_backend, "~> 0.0.13"},
 
+      {:telemetry, "~> 1.2"},
+      {:telemetry_poller, "~> 1.0"},
+      {:telemetry_metrics_prometheus, "~> 1.1.0"},
+
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_unit_sonarqube, "~> 0.1", only: :test},
     ]

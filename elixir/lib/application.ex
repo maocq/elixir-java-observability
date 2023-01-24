@@ -2,6 +2,7 @@ defmodule ElixirObservability.Application do
   alias ElixirObservability.EntryPoint.ApiRest
   alias ElixirObservability.Config.{AppConfig, ConfigHolder}
   alias ElixirObservability.Utils.CertificatesAdmin
+  alias ElixirObservability.Utils.CustomTelemetry
 
   use Application
   require Logger
@@ -34,7 +35,8 @@ defmodule ElixirObservability.Application do
   def env_children() do
     [
       {ElixirObservability.Adapters.Repository.Repo, []},
-      {Finch, name: HttpFinch, pools: %{:default => [size: 500]}}
+      {Finch, name: HttpFinch, pools: %{:default => [size: 500]}},
+      {TelemetryMetricsPrometheus, [metrics: CustomTelemetry.metrics()]}
     ]
   end
 end
