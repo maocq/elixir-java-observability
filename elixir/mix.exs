@@ -47,6 +47,8 @@ defmodule ElixirObservability.MixProject do
       {:opentelemetry_finch, "~> 0.1"},
       {:opentelemetry_exporter, "~> 1.2"},
 
+      {:opentelemetry_logger_metadata, "~> 0.1.0"},
+
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_unit_sonarqube, "~> 0.1", only: :test},
     ]

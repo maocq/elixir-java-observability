@@ -14,12 +14,18 @@ config :elixir_observability,
 config :logger,
        level: :debug
 
+config :logger, :console,
+       format: "$time [$level] $metadata$message \n",
+       metadata: [:span_id, :trace_id]
+
 config :logger,
        backends: [{LoggerFileBackend, :debug_log}]
 
 config :logger, :debug_log,
        path: "/tmp/log/observability-elixir.log",
-       level: :debug
+       level: :debug,
+       format: "$time [$level] $metadata$message \n",
+       metadata: [:span_id, :trace_id]
 
 config :opentelemetry, :resource, service: %{name: "Elixir"}
 config :opentelemetry, :processors,
