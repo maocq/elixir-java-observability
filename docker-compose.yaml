@@ -1,0 +1,108 @@
+version: "3"
+services:
+
+  observability-tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo-local.yaml:/etc/tempo.yaml
+    ports:
+      - "14268:14268"  # jaeger ingest
+      - "3200:3200"   # tempo
+      - "4317:4317"  # otlp grpc
+      - "4318:4318"  # otlp http
+      - "9411:9411"   # zipkin
+    networks:
+        - network
+
+  observability-loki:
+    image: grafana/loki:2.6.1
+    ports:
+      - "3100:3100"
+    command: -config.file=/mnt/config/loki-config.yaml
+    volumes:
+      - ./loki-config.yaml:/mnt/config/loki-config.yaml
+    networks:
+        - network
+
+  observability-promtail:
+    image: grafana/promtail:2.6.1
+    volumes:
+      - ./promtail-config.yaml:/mnt/config/promtail-config.yaml
+      - /tmp/log:/tmp/log
+    command: -config.file=/mnt/config/promtail-config.yaml
+    networks:
+      - network
+
+  observability-prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus.yaml
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus.yaml
+    ports:
+      - "9090:9090"
+    networks:
+        - network
+
+  observability-grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+    networks:
+        - network
+
+  observability-db:
+      image: 'postgres:13.1-alpine'
+      environment:
+          - POSTGRES_USER=compose-postgres
+          - POSTGRES_PASSWORD=compose-postgres
+      ports:
+          - "5432:5432"
+      volumes:
+          - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      networks:
+          - network
+
+  observability-java:
+      container_name: observability-java
+      build:
+          context: ./java
+          dockerfile: Dockerfile
+      image: observability-java:latest
+      volumes:
+        - /tmp/log:/tmp/log
+      depends_on:
+          - observability-db
+          - observability-tempo
+          - observability-loki
+          - observability-prometheus
+      ports:
+          - 8080:8080
+      networks:
+          - network
+
+  #observability-elixir:
+  #    container_name: observability-elixir
+  #    build:
+  #        context: ./elixir
+  #        dockerfile: Dockerfile
+  #    image: observability-elixir:latest
+  #    volumes:
+  #      - /tmp/log:/tmp/log
+  #    depends_on:
+  #        - observability-java
+  #    ports:
+  #        - 8083:8083
+  #    networks:
+  #        - network
+
+networks:
+    network:
+        driver: bridge
